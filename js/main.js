@@ -16,6 +16,10 @@
         msgB: document.querySelector("#scroll-section-0 .main-msg.b"), // msgB div 태그
         msgC: document.querySelector("#scroll-section-0 .main-msg.c"), // msgC div 태그
         msgD: document.querySelector("#scroll-section-0 .main-msg.d"), // msgD div 태그
+
+        canvas: document.querySelector("#canvas-video-0"), // canvas 태그
+        context: document.querySelector("#canvas-video-0").getContext("2d"), // context 객체
+        videoImgs: [], // 비디오 이미지 배열
       },
       values: {
         msgA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
@@ -34,6 +38,10 @@
         msgB_translateY_out: [0, -50, { start: 0.45, end: 0.5 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
         msgC_translateY_out: [0, -50, { start: 0.65, end: 0.7 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
         msgD_translateY_out: [0, -50, { start: 0.85, end: 0.9 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+
+        videoImgsCount: 300, // 비디오 이미지 개수
+        imgSeq: [0, 299], // 비디오 이미지 순서
+        canvas_opacity: [1, 0, { start: 0.85, end: 0.95 }], // [0]: 투명도 시작 값, [1]: 마무리 값, [2]: 애니메이션 재생 구간
       },
     },
     {
@@ -58,27 +66,36 @@
         msgC: document.querySelector("#scroll-section-2 .desc-msg.c"), // msgC div태그
         pinB: document.querySelector("#scroll-section-2 .desc-msg.b .pin"), // msgB pin 태그
         pinC: document.querySelector("#scroll-section-2 .desc-msg.c .pin"), // msgC pin 태그
+
+        canvas: document.querySelector("#canvas-video-2"), // canvas 태그
+        context: document.querySelector("#canvas-video-2").getContext("2d"), // context 객체
+        videoImgs: [], // 비디오 이미지 배열
       },
       values: {
-        msgA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgC_opacity_in: [0, 1, { start: 0.5, end: 0.6 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgA_opacity_out: [1, 0, { start: 0.25, end: 0.3 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgB_opacity_out: [1, 0, { start: 0.45, end: 0.5 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgC_opacity_out: [1, 0, { start: 0.65, end: 0.7 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgA_translateY_in: [50, 0, { start: 0.1, end: 0.2 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgB_translateY_in: [50, 0, { start: 0.3, end: 0.4 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgC_translateY_in: [50, 0, { start: 0.5, end: 0.6 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgA_translateY_out: [0, -50, { start: 0.25, end: 0.3 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgB_translateY_out: [0, -50, { start: 0.45, end: 0.5 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        msgC_translateY_out: [0, -50, { start: 0.65, end: 0.7 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgA_opacity_in: [0, 1, { start: 0.15, end: 0.2 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgB_opacity_in: [0, 1, { start: 0.5, end: 0.55 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgC_opacity_in: [0, 1, { start: 0.72, end: 0.77 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgA_opacity_out: [1, 0, { start: 0.3, end: 0.35 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgB_opacity_out: [1, 0, { start: 0.58, end: 0.63 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgC_opacity_out: [1, 0, { start: 0.85, end: 0.9 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgA_translateY_in: [20, 0, { start: 0.15, end: 0.2 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgB_translateY_in: [20, 0, { start: 0.5, end: 0.55 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgC_translateY_in: [20, 0, { start: 0.72, end: 0.77 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgA_translateY_out: [0, -20, { start: 0.3, end: 0.35 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgB_translateY_out: [0, -20, { start: 0.58, end: 0.63 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        msgC_translateY_out: [0, -20, { start: 0.85, end: 0.9 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
 
-        pinB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        pinC_opacity_in: [0, 1, { start: 0.5, end: 0.6 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        pinB_opacity_out: [1, 0, { start: 0.45, end: 0.5 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        pinC_opacity_out: [1, 0, { start: 0.65, end: 0.7 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        pinB_translateY: [0.5, 1, { start: 0.3, end: 0.4 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
-        pinC_translateY: [0.5, 1, { start: 0.5, end: 0.6 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        pinB_opacity_in: [0, 1, { start: 0.5, end: 0.55 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        pinC_opacity_in: [0, 1, { start: 0.72, end: 0.77 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        pinB_opacity_out: [1, 0, { start: 0.58, end: 0.63 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        pinC_opacity_out: [1, 0, { start: 0.85, end: 0.9 }], // [0]: 투명도 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        pinB_translateY: [0.5, 1, { start: 0.5, end: 0.55 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+        pinC_translateY: [0.5, 1, { start: 0.72, end: 0.77 }], // [0]: translateY 시작 값, [1]: 마무리 값 , [2]: 애니메이션 재생 구간
+
+        videoImgsCount: 960, // 비디오 이미지 개수
+        imgSeq: [0, 959], // 비디오 이미지 순서
+        canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }], // [0]: 투명도 시작 값, [1]: 마무리 값, [2]: 애니메이션 재생 구간
+        canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }], // [0]: 투명도 시작 값, [1]: 마무리 값, [2]: 애니메이션 재생 구간
       },
     },
     {
@@ -91,6 +108,22 @@
       },
     },
   ];
+
+  const setCanvas = () => {
+    let img;
+    for (let i = 0; i < sectionInfo[0].values.videoImgsCount; i++) {
+      img = document.createElement("img");
+      img.src = `./videos/001/IMG_${6726 + i}.JPG`;
+      sectionInfo[0].objs.videoImgs.push(img); // 배열에 저장
+    }
+
+    let img2;
+    for (let i = 0; i < sectionInfo[2].values.videoImgsCount; i++) {
+      img2 = document.createElement("img");
+      img2.src = `./videos/002/IMG_${7027 + i}.JPG`;
+      sectionInfo[2].objs.videoImgs.push(img2); // 배열에 저장
+    }
+  };
 
   const setLayout = () => {
     yOffset = window.pageYOffset;
@@ -123,6 +156,11 @@
       }
     }
     document.body.setAttribute("id", `show-section-${currentSection}`);
+
+    // canvas
+    const canvasHeightRatio = window.innerHeight / 1080;
+    sectionInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasHeightRatio})`;
+    sectionInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasHeightRatio})`;
   };
 
   const calValues = (values, currentYOffset) => {
@@ -165,6 +203,15 @@
 
     switch (currentSection) {
       case 0:
+        // ✅ 비디오 애니메이션
+        let videoIndex = Math.round(calValues(values.imgSeq, currentYOffset)); // 비디오 이미지 스크롤에 따른 인덱스 번호
+        objs.context.drawImage(objs.videoImgs[videoIndex], 0, 0); // canvas에 그리기
+        objs.canvas.style.opacity = calValues(
+          values.canvas_opacity,
+          currentYOffset
+        ); // canvas 사라지기
+
+        // ✅ 글자 애니메이션
         if (currentSectionRatio <= 0.21) {
           // in
           objs.msgA.style.opacity = calValues(
@@ -257,8 +304,27 @@
       case 1:
         break;
       case 2:
+        // ✅ 비디오 애니메이션
+        let videoIndex2 = Math.round(calValues(values.imgSeq, currentYOffset)); // 비디오 이미지 스크롤에 따른 인덱스 번호
+        objs.context.drawImage(objs.videoImgs[videoIndex2], 0, 0); // canvas에 그리기
+
+        // canvas 투명도 애니메이션
+        if (currentSectionRatio <= 0.5) {
+          // in
+          objs.canvas.style.opacity = calValues(
+            values.canvas_opacity_in,
+            currentYOffset
+          );
+        } else {
+          // out
+          objs.canvas.style.opacity = calValues(
+            values.canvas_opacity_out,
+            currentYOffset
+          );
+        }
+
         // msgA
-        if (currentSectionRatio <= 0.21) {
+        if (currentSectionRatio <= 0.25) {
           // in
           objs.msgA.style.opacity = calValues(
             values.msgA_opacity_in,
@@ -280,7 +346,7 @@
           )}%, 0)`;
         }
         // msgB && pinB
-        if (currentSectionRatio <= 0.42) {
+        if (currentSectionRatio <= 0.57) {
           // in
           objs.msgB.style.opacity = calValues(
             values.msgB_opacity_in,
@@ -310,7 +376,7 @@
           )})`;
         }
         // msgC && pinC
-        if (currentSectionRatio <= 0.62) {
+        if (currentSectionRatio <= 0.83) {
           // in
           objs.msgC.style.opacity = calValues(
             values.msgC_opacity_in,
@@ -385,6 +451,15 @@
     yOffset = window.pageYOffset;
     scrollLoop();
   });
-  window.addEventListener("load", setLayout); // 브라우저 로드되었을 때마다 섹션 높이 세팅
+  window.addEventListener("load", () => {
+    setLayout();
+    sectionInfo[0].objs.context.drawImage(
+      sectionInfo[0].objs.videoImgs[1],
+      0,
+      0
+    );
+  }); // 브라우저 로드되었을 때마다 섹션 높이 세팅
   window.addEventListener("resize", setLayout); // 브라우저 창이 변할 때마다 섹션 높이 세팅
+
+  setCanvas();
 })();
