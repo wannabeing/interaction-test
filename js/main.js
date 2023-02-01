@@ -105,6 +105,15 @@
       heightNum: 5, // 기기마다 다른 브라우저 높이의 5배로 scrollHeight 세팅
       objs: {
         container: document.querySelector("#scroll-section-3"), // section 태그
+        canvas: document.querySelector(".img-blend-canvas"), // canvas 태그
+        context: document.querySelector(".img-blend-canvas").getContext("2d"), // context 객체
+        imgPath: ["./images/blend-img-1.jpg", "./images/blend-img-2.jpg"],
+        imgs: [],
+      },
+      values: {
+        rect1X: [0, 0, { start: 0, end: 0 }], // [0]: 기둥이 그려지는 x좌표, [1]: 끝나는 x좌표, [2]:
+        rect2X: [0, 0, { start: 0, end: 0 }],
+        rectStartY: 0,
       },
     },
   ];
@@ -122,6 +131,13 @@
       img2 = document.createElement("img");
       img2.src = `./videos/002/IMG_${7027 + i}.JPG`;
       sectionInfo[2].objs.videoImgs.push(img2); // 배열에 저장
+    }
+
+    let img3;
+    for (let i = 0; i < sectionInfo[3].objs.imgPath.length; i++) {
+      img3 = document.createElement("img");
+      img3.src = sectionInfo[3].objs.imgPath[i];
+      sectionInfo[3].objs.imgs.push(img3); // 배열에 저장
     }
   };
 
@@ -405,8 +421,106 @@
             currentYOffset
           )})`;
         }
+
+        // Current Section 3에서 사용하는 canvas를 미리 그리기
+        if (currentSectionRatio > 0.9) {
+          const { objs, values } = sectionInfo[3];
+
+          // 가로/세로 꽉차게 하기 위해 세팅 (계산 필요)
+          const widthRatio = window.innerWidth / objs.canvas.width;
+          const heightRatio = window.innerHeight / objs.canvas.height;
+          let canvasScaleRatio;
+
+          if (widthRatio <= heightRatio) {
+            // 캔버스보다 브라우저창이 홀쭉한 경우
+            canvasScaleRatio = heightRatio;
+          } else {
+            // 캔버스보다 브라우저창이 납작한 경우
+            canvasScaleRatio = widthRatio;
+          }
+
+          objs.canvas.style.transform = `scale(${canvasScaleRatio})`;
+          objs.context.fillStyle = "#ffffff";
+          objs.context.drawImage(objs.imgs[0], 0, 0);
+
+          // 캔버스 비율에 맞춰 가정한 innerWidth와 innerHeight
+          const reInnerWidth = document.body.offsetWidth / canvasScaleRatio;
+          const reInnerHeight = window.innerHeight / canvasScaleRatio;
+
+          const rectWidth = reInnerWidth * 0.15; // 기둥 너비
+          values.rect1X[0] = (objs.canvas.width - reInnerWidth) / 2; // 애니메이션 시작하는 왼쪽 기둥 x좌표
+          values.rect1X[1] = values.rect1X[0] - rectWidth; // 애니메이션 끝나는 왼쪽기둥 x좌표
+          values.rect2X[0] = values.rect1X[0] + reInnerWidth - rectWidth; // 애니메이션 시작하는 오른쪽 기둥 x좌표
+          values.rect2X[1] = values.rect2X[0] + rectWidth; // 애니메이션 끝나는 오른쪽 기둥 x좌표
+
+          // 좌우 흰색 기둥 그리기 (x, y, width, height)
+          objs.context.fillRect(
+            parseInt(values.rect1X[0]),
+            0,
+            parseInt(rectWidth),
+            objs.canvas.height
+          );
+          objs.context.fillRect(
+            parseInt(values.rect2X[0]),
+            0,
+            parseInt(rectWidth),
+            objs.canvas.height
+          );
+        }
         break;
       case 3:
+        // 가로/세로 꽉차게 하기 위해 세팅 (계산 필요)
+        const widthRatio = window.innerWidth / objs.canvas.width;
+        const heightRatio = window.innerHeight / objs.canvas.height;
+        let canvasScaleRatio;
+
+        if (widthRatio <= heightRatio) {
+          // 캔버스보다 브라우저창이 홀쭉한 경우
+          canvasScaleRatio = heightRatio;
+        } else {
+          // 캔버스보다 브라우저창이 납작한 경우
+          canvasScaleRatio = widthRatio;
+        }
+
+        objs.canvas.style.transform = `scale(${canvasScaleRatio})`;
+        objs.context.fillStyle = "#ffffff";
+        objs.context.drawImage(objs.imgs[0], 0, 0);
+
+        // 캔버스 비율에 맞춰 가정한 innerWidth와 innerHeight
+        const reInnerWidth = document.body.offsetWidth / canvasScaleRatio;
+        const reInnerHeight = window.innerHeight / canvasScaleRatio;
+
+        // 기둥이 옆으로 이동하는 위치 저장
+        if (!values.rectStartY) {
+          values.rectStartY =
+            objs.canvas.offsetTop +
+            (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2;
+
+          values.rect1X[2].start = window.innerHeight / 2 / scrollHeight;
+          values.rect2X[2].start = window.innerHeight / 2 / scrollHeight;
+          values.rect1X[2].end = values.rectStartY / scrollHeight;
+          values.rect2X[2].end = values.rectStartY / scrollHeight;
+        }
+
+        const rectWidth = reInnerWidth * 0.15; // 기둥 너비
+        values.rect1X[0] = (objs.canvas.width - reInnerWidth) / 2; // 애니메이션 시작하는 왼쪽 기둥 x좌표
+        values.rect1X[1] = values.rect1X[0] - rectWidth; // 애니메이션 끝나는 왼쪽기둥 x좌표
+        values.rect2X[0] = values.rect1X[0] + reInnerWidth - rectWidth; // 애니메이션 시작하는 오른쪽 기둥 x좌표
+        values.rect2X[1] = values.rect2X[0] + rectWidth; // 애니메이션 끝나는 오른쪽 기둥 x좌표
+
+        // 좌우 흰색 기둥 그리기 (x, y, width, height)
+        objs.context.fillRect(
+          parseInt(calValues(values.rect1X, currentYOffset)),
+          0,
+          parseInt(rectWidth),
+          objs.canvas.height
+        );
+        objs.context.fillRect(
+          parseInt(calValues(values.rect2X, currentYOffset)),
+          0,
+          parseInt(rectWidth),
+          objs.canvas.height
+        );
         break;
     }
   };
